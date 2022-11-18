@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Apple {
     private Color color;
-    private int weight;
+    private Integer weight;
 
     @Override
     public String toString() {

@@ -9,7 +9,12 @@ import modernjava.prettyprint.ApplePrint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 public class FilteringApples {
@@ -48,6 +53,37 @@ public class FilteringApples {
         System.out.println("\n<<<abstract list>>>");
         System.out.println(filter(inventory, apple -> Color.GREEN.equals(apple.getColor())));
         System.out.println(filter(numbers, num -> num % 2 == 0));
+
+        // using lambda
+        inventory.sort(new Comparator<Apple>() {
+            @Override
+            public int compare(Apple o1, Apple o2) {
+                return o1.getWeight().compareTo(o2.getWeight());
+            }
+        });
+
+        inventory.sort((Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+
+        ////////
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hello world");
+            }
+        });
+
+        Thread t2 = new Thread(() -> System.out.println("Hello world"));
+
+        ////////
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<String> threadName = executorService.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return Thread.currentThread().getName();
+            }
+        });
+
+        Future<String> threadName2 = executorService.submit(() -> Thread.currentThread().getName());
     }
 
     public static <T> List<T> filter(List<T> list, Predicate<T> p) {
