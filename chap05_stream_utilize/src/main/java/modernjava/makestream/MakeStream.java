@@ -3,8 +3,13 @@ package modernjava.makestream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class MakeStream {
@@ -44,9 +49,57 @@ public class MakeStream {
                     .distinct()
                     .count();
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e instanceof NoSuchFileException) {
+                System.out.println("Error no search file");
+            }
         }
 
+        //무한 스트림 만들기
+        Stream.iterate(0, n -> n + 2)
+                .limit(10)
+                .forEach(n -> System.out.print(n + ", "));
+        System.out.println();
 
+        quiz5_4();
+
+        //iterator 는 이전에 생산된 값을 활용, generate 는 이전 생산값 사용안함.
+        //iterator 는 인자를 받아 인자와 같은 타입값을 리턴 (UnaryOperator) generate 는 인자 없고 특정 타입 리턴 (Supplier)
+        //Supplier 는 보통 상태를 저장하지 않음. 하지만 상태를 저장하지 못하는건 아님. 단 Supplier 가 상태를 가지면 병렬 코드에서 부작용이 생길 수 있음.
+        Stream.generate(Math::random)
+                .limit(5)
+                .forEach(n -> System.out.print(n + ", "));
+        System.out.println();
+
+        //generate 로 피보나치 구현. (실제로는 이런 상태를 갖는 Supplier 는 피해야 함.)
+        //람다는 들어온 변수의 상태를 변경하지 못하기 때문에 람다를 사용할 수 없다.
+        //익명 클래스를 구현하여 Stream 에 적용하면 해결은 가능하다.
+        IntSupplier fib = new IntSupplier() {
+            private int previous = 0;
+            private int current = 1;
+            @Override
+            public int getAsInt() {
+                int oldPrevious = this.previous;
+                int nextValue = this.previous + this.current;
+                this.previous = current;
+                this.current = nextValue;
+                return oldPrevious;
+            }
+        };
+
+        IntStream.generate(fib).limit(10).forEach(n -> System.out.print(n + ", "));
+        System.out.println();
+    }
+
+    private static void quiz5_4() {
+
+        Stream.iterate(new int[] {0, 1}, n -> new int[]{n[1], n[0] + n[1]})
+                .limit(20)
+                .forEach(t -> System.out.print("(" + t[0] + ", " + t[1] + "), "));
+        System.out.println();
+
+        //java 9 에서는 iterator 에 프레디케이트 지원 -> 조건을 달아 iterator 사용 가능
+        IntStream.iterate(0, n -> n < 100, a -> a + 4)
+                .forEach(n -> System.out.print(n + ", "));
+        System.out.println();
     }
 }
