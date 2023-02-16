@@ -4,7 +4,6 @@ import modernjava.Common;
 import modernjava.Dish;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -21,8 +20,10 @@ public class Exam01 {
         String shortMenu = menu.stream().map(Dish::getName).collect(joining());
 
         String shortMenu2 = menu.stream().map(Dish::getName).collect(reducing((s1, s2) -> s1 + s2)).get();
+
 //        컴파일 안됨 reducing 인자는 BinaryOperator 로 파라미터와 return 값의 형식이 일치 해야 함.
 //        String shortMenu3 = menu.stream().collect(reducing((d1, d2) -> d1.getName() + d2.getName())).get();
+
         String shortMenu3 = menu.stream().collect(reducing("", Dish::getName, (s1, s2) -> s1 + s2));
     }
 
