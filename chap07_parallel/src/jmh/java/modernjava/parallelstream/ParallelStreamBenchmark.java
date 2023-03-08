@@ -13,12 +13,12 @@ public class ParallelStreamBenchmark {
     private static final long N = 10_000_000L;
 
 //    @Benchmark
-//    public long sequentialSum() {
+//    public long sequentialSum() { // benchmark scope : 60.799
 //        return Stream.iterate(1L, i -> i + 1).limit(N).reduce(0L, Long::sum);
 //    }
 
 //    @Benchmark
-//    public long iterativeSum() {
+//    public long iterativeSum() { // benchmark scope : 2.744
 //        long result = 0;
 //
 //        for (long i = 1L; i <= N; i++) {
@@ -29,17 +29,17 @@ public class ParallelStreamBenchmark {
 //    }
 //
 //    @Benchmark
-//    public long parallelSum() {
+//    public long parallelSum() { // benchmark scope : 84.640
 //        return Stream.iterate(1L, i -> i + 1).limit(N).parallel().reduce(0L, Long::sum);
 //    }
 
     @Benchmark
-    public long rangedSum() {
+    public long rangedSum() { // benchmark scope : 8.459
         return LongStream.rangeClosed(1, N).reduce(0L, Long::sum);
     }
 
     @Benchmark
-    public long parallelRangedSum() {
+    public long parallelRangedSum() { // benchmark scope : 1.088
         return LongStream.rangeClosed(1, N).parallel().reduce(0L, Long::sum);
     }
 
